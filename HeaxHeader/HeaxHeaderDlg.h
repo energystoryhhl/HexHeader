@@ -31,4 +31,11 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
+
+	//user define
+	void DoUserInit();
+
+	void ShowConsole();
+public:
+	afx_msg void OnBnClickedOk();
 };
