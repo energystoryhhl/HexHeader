@@ -14,32 +14,9 @@ namespace HexHeader
 			assert(p_binaryFile_ != NULL);
 			assert(p_buff_ != NULL);
 
-			fileSize_ = p_binaryFile_->size();
-
-			assert(fileSize_ > 0);
-
-			size_t size =  p_binaryFile_->read(p_buff_.get(), fileSize_);
-
-			/*
-			for (int i = 0; i < fileSize_; i++)
-			{
-			unsigned char tmp = *(p_buff_.get() + i);
-
-			printf("%02x ", tmp);
-
-
-			if (((i + 1) % 16) == 0 )
-			printf("\n");
-			}
-
-			BinaryFile bfile("test.dat");
-			bfile.write(p_buff_.get(), fileSize_);
-			*/
-
-			assert(size == fileSize_);
-			
-			vecBuffer_.insert(vecBuffer_.begin(), p_buff_.get(), p_buff_.get() + fileSize_);
+			loadBuffer();
 		}
+
 
 		AppendFile::~AppendFile()
 		{
@@ -115,7 +92,7 @@ namespace HexHeader
 				str.append(buf,3);
 				if (((t + 1) % 16) == 0)
 				{
-					str.append("\n");
+					str.append("\r\n");
 					//printf("\n ");
 				}
 				t++;
@@ -145,6 +122,46 @@ namespace HexHeader
 				return false;
 			else
 				return true;
+		}
+
+		bool AppendFile::writeToCurFile()
+		{
+			size_t size = p_binaryFile_->write(vecBuffer_.data(), vecBuffer_.size());
+			if (size != vecBuffer_.size())
+				return false;
+			else
+				return true;
+		}
+
+		void AppendFile::loadBuffer()
+		{
+			fileSize_ = p_binaryFile_->size();
+
+			assert(fileSize_ >= 0);
+
+			size_t size = p_binaryFile_->read(p_buff_.get(), fileSize_);
+
+			/*
+			for (int i = 0; i < fileSize_; i++)
+			{
+			unsigned char tmp = *(p_buff_.get() + i);
+
+			printf("%02x ", tmp);
+
+
+			if (((i + 1) % 16) == 0 )
+			printf("\n");
+			}
+
+			BinaryFile bfile("test.dat");
+			bfile.write(p_buff_.get(), fileSize_);
+			*/
+
+			assert(size == fileSize_);
+
+			vecBuffer_.clear();
+
+			vecBuffer_.insert(vecBuffer_.begin(), p_buff_.get(), p_buff_.get() + fileSize_);
 		}
 
 

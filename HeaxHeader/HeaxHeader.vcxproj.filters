@@ -13,14 +13,14 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="openssl">
+      <UniqueIdentifier>{0ea02a54-c5a4-4c57-bd82-370da31434ed}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="HeaxHeader.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="HeaxHeaderDlg.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -42,11 +42,14 @@
     <ClInclude Include="noncopyable.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="HeaxHeader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FileOwner.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="HeaxHeader.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="HeaxHeaderDlg.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -57,6 +60,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="BinaryFile.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="HeaxHeader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="FileOwner.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

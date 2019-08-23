@@ -40,6 +40,10 @@ namespace HexHeader
 
 			void close();
 
+			void open();
+
+			void cleanFile();
+
 			void seek(unsigned int location);
 
 			string fileName();

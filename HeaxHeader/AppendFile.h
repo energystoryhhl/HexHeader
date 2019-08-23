@@ -45,7 +45,21 @@ namespace HexHeader
 
 			size_t fileSize() const;
 
+			//
+			//save as
 			bool writeToFile(const char *newFilename = NULL);
+
+			//
+			//save
+			bool writeToCurFile();
+
+			void loadBuffer();
+
+			void cleanFile() { p_binaryFile_->cleanFile(); };
+
+			HexData_t & buffer() {
+				return vecBuffer_;
+			}
 
 			//shared_ptr<char>
 

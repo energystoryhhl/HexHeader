@@ -3,7 +3,18 @@
 //
 
 #pragma once
+#include "afxwin.h"
+#include "afxcmn.h"
 
+#include <vector>
+#include "FileOwner.h"
+#include "AppendFile.h"
+#include "BinaryFile.h"
+
+#include <assert.h>
+#include <memory>
+
+using namespace HexHeader;
 
 // CHeaxHeaderDlg ¶Ô»°¿ò
 class CHeaxHeaderDlg : public CDialogEx
@@ -36,6 +47,40 @@ protected:
 	void DoUserInit();
 
 	void ShowConsole();
+
+	void SetListControl();
+
+	void ListControlAddItems(std::vector<char> & v);
+
+	void OnOpenFile(CString &path);
+
+	bool SaveAs(CString &path);
+
+	bool Save();
+
+	CString FilePathBox();
+
+	CString FilePathBoxSaveAs();
+
+	//FileOwner fileOwner_;
+	std::unique_ptr<FileOwner> p_fileOwner_;
+
 public:
+	//friend class HexHeader;
+
 	afx_msg void OnBnClickedOk();
+	CEdit editHexShow_;
+	afx_msg void OnEnChangeEditHexShow();
+	CListCtrl listCtrlHexShow_;
+	afx_msg void OnDropFiles(HDROP hDropInfo);
+
+	CString dropFilePath_;
+	CEdit editCtrlMsg_;
+	afx_msg void OnBnClickedCancel();
+	afx_msg void OnOpenFileBnClicked();
+
+	afx_msg void OnBtnSave();
+	afx_msg void On_BtnSaveAs();
+
+	virtual BOOL  PreTranslateMessage(MSG* pMsg);
 };

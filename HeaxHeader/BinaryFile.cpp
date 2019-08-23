@@ -94,8 +94,26 @@ namespace HexHeader
 			}
 			else
 			{
+				cout << "Bclose()" << endl;
 				fclose(fd_);
+				fd_ = NULL;
 			}
+		}
+
+		void BinaryFile::open()
+		{
+			if (fd_ == NULL)
+			{
+				fd_ = fopen(filename_.c_str(), "ab+");
+				assert(fd_ != NULL);
+			}
+		}
+
+		void BinaryFile::cleanFile()
+		{
+			close();
+			fd_ = fopen(filename_.c_str(), "wb+");
+			assert(fd_ != NULL);
 		}
 
 		void BinaryFile::seek(unsigned int location)
