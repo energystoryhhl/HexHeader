@@ -9,6 +9,8 @@
 
 #include "AppendFile.h"
 
+#include "openssl\sha.h"
+
 using namespace HexHeader;
 using namespace FileUtil;
 
@@ -16,6 +18,9 @@ using namespace FileUtil;
 #define new DEBUG_NEW
 #endif
 
+
+#pragma comment(lib,"libcrypto.lib")
+#pragma comment(lib,"libssl.lib")
 
 // 用于应用程序“关于”菜单项的 CAboutDlg 对话框
 
@@ -176,6 +181,11 @@ void CHeaxHeaderDlg::DoUserInit()
 
 	p_fileOwner_.reset(new FileOwner);
 
+
+	//if (LoadLibrary(_T("libcrypto-1_1.dll")) == NULL || LoadLibrary(_T("libssl-1_1.dll")) == NULL)
+	//{
+	//	MessageBox(_T("Load lib error"));
+	//}
 }
 
 void CHeaxHeaderDlg::ShowConsole()
@@ -425,6 +435,22 @@ void CHeaxHeaderDlg::OnBnClickedOk()
 
 
 	ListControlAddItems(file.buffer());
+
+	////////////////
+	char string1[] = "11223344";
+
+	unsigned char md[33] = { 0 };
+
+	SHA256( (const unsigned char *) string1, sizeof(string1)-1, md);
+
+	for (int i = 0; i < 33; i++)
+	{
+		unsigned char tmp = md[i];
+		printf("0x%02x ", tmp);
+	}
+	//////////////////
+
+	
 
 }
 
