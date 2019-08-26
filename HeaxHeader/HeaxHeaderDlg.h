@@ -50,7 +50,7 @@ protected:
 
 	void SetListControl();
 
-	void ListControlAddItems(std::vector<char> & v);
+	void ListControlAddItems(std::vector<HexDataElemt_t> & v);
 
 	void OnOpenFile(CString &path);
 
@@ -83,4 +83,6 @@ public:
 	afx_msg void On_BtnSaveAs();
 
 	virtual BOOL  PreTranslateMessage(MSG* pMsg);
+	afx_msg void ON_CloseFile();
+	afx_msg void On_DoScript();
 };

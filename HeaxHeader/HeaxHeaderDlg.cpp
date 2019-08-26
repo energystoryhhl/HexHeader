@@ -2,17 +2,22 @@
 // HeaxHeaderDlg.cpp : 实现文件
 //
 
+#include <map>
+
 #include "stdafx.h"
 #include "HeaxHeader.h"
 #include "HeaxHeaderDlg.h"
 #include "afxdialogex.h"
 
 #include "AppendFile.h"
-
 #include "openssl\sha.h"
+#include "StringMethod.h"
+#include "Command.h"
 
 using namespace HexHeader;
 using namespace FileUtil;
+using namespace Detail;
+using namespace Command;
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -84,6 +89,8 @@ BEGIN_MESSAGE_MAP(CHeaxHeaderDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_OPEN_FILE, &CHeaxHeaderDlg::OnOpenFileBnClicked)
 	ON_BN_CLICKED(IDC_BUTTON_SAVE, &CHeaxHeaderDlg::OnBtnSave)
 	ON_BN_CLICKED(IDC_BUTTON_SAVEAS, &CHeaxHeaderDlg::On_BtnSaveAs)
+	ON_BN_CLICKED(IDC_BUTTON_CLOSE, &CHeaxHeaderDlg::ON_CloseFile)
+	ON_BN_CLICKED(IDC_BUTTON_DOSCRIPT, &CHeaxHeaderDlg::On_DoScript)
 END_MESSAGE_MAP()
 
 
@@ -213,7 +220,7 @@ void CHeaxHeaderDlg::SetListControl()
 	listCtrlHexShow_.EnsureVisible(listCtrlHexShow_.GetItemCount() - 1, FALSE);
 }
 
-void CHeaxHeaderDlg::ListControlAddItems(vector<char>& v)
+void CHeaxHeaderDlg::ListControlAddItems(vector<HexDataElemt_t>& v)
 {
 
 	for (int i = 0,j = 0; i < v.size(); i++,j++)
@@ -583,4 +590,120 @@ BOOL  CHeaxHeaderDlg::PreTranslateMessage(MSG * pMsg)
 		return true;
 	}
 	return CDialogEx::PreTranslateMessage(pMsg);	
+}
+
+
+void CHeaxHeaderDlg::ON_CloseFile()
+{
+	if (p_fileOwner_->ifOpen() == false)
+	{
+		editCtrlMsg_.SetWindowTextW(CString("ERROR: No File opened! "));
+		return;
+	}
+
+	p_fileOwner_->close();
+	listCtrlHexShow_.DeleteAllItems();
+
+	editCtrlMsg_.SetWindowTextW(CString("Close File ") + dropFilePath_);
+	//p_fileOwner_->ifOpen = false;
+}
+
+
+void CHeaxHeaderDlg::On_DoScript()
+{
+	// TODO: 在此添加控件通知处理程序代码
+
+	if (p_fileOwner_->ifOpen() == false)
+		return;
+
+	CString scriptLines;
+	editHexShow_.GetWindowTextW(scriptLines);
+	string cmdLines = Wchr2str(scriptLines);
+	
+	if (cmdLines == "")
+		return;
+
+	std::cout << cmdLines << endl;
+
+	vector<string> lines = CmdLine(cmdLines, "\r\n").elemts();
+
+	/*start script*/
+	//map<string, unsigned int> envVar;
+
+	int num = 0;
+	bool opFlag = false;
+	bool encryptFlag = false;
+	///*pre */
+	//for (auto i : lines)
+	//{
+	//	if (i.find("="))
+	//	{
+	//		vector<string> eles = CmdLine(i, "=").elemts();
+	//		for (auto ee : eles)
+	//		{
+	//			cout << ee << endl;
+	//		}
+	//		//envVar.insert(pair<string, unsigned int>(eles[0], string_as_T<unsigned int>(eles[1])));
+	//		cmdLines.replace(cmdLines.begin(), cmdLines.end(),"hexaddr=256","0xff");
+	//		//cmdLines.replace()
+	//		continue;
+	//	}
+	//}
+	vector<HexDataElemt_t> hex;
+	for (auto i : lines)
+	{
+		std::cout << "opcode_ " << num <<": "<< i << endl;
+
+		if (i.size() <= 1)
+			continue;
+
+		for (auto op : opcodes)
+		{
+			if (i.find(op))
+			{
+				opFlag = true;
+				break;
+			}
+		}
+
+		if (i.find("0x") !=std::string::npos)
+		{
+			str2UcArray(hex, i);
+			continue;
+		}
+
+		if (opFlag)
+		{
+			
+			vector<string> op= CmdLine(i, " ").elemts();  //demli the string
+
+			AppendFile * file = &p_fileOwner_->file();
+
+			Operation operation(file, hex, op);
+
+			cout << "op = " << op[0] << endl;
+
+			if (operation.doOperation()!= true)
+			{
+				cout << "ERROR!"<<endl;
+				hex.clear();
+			}
+			else
+			{
+				listCtrlHexShow_.DeleteAllItems();
+				ListControlAddItems(p_fileOwner_->file().buffer());
+				hex.clear();
+			}
+			opFlag = false;
+
+		}
+
+
+
+
+		num++;
+	}
+	
+	
+
 }

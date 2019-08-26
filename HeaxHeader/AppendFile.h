@@ -8,7 +8,7 @@
 #include <vector>
 
 #include <ostream>
-
+#include <memory>
 using namespace std;
 using namespace HexHeader;
 using namespace FileUtil;
@@ -19,8 +19,10 @@ namespace HexHeader
 	{
 		typedef unsigned long location_t;
 
-		typedef vector<char> HexData_t;
+		typedef vector<unsigned char> HexData_t;
 
+		typedef unsigned char HexDataElemt_t;
+		
 
 		class AppendFile : public noncopyable
 		{
@@ -31,13 +33,13 @@ namespace HexHeader
 
 			~AppendFile();
 
-			bool insert(location_t location, vector<char>::iterator & start, size_t len);
+			bool insert(location_t location, vector<HexDataElemt_t>::iterator & start, size_t len);
 
-			bool push_back(char chr);
+			bool push_back(HexDataElemt_t chr);
 
 			bool erase(location_t location, size_t len);
 
-			bool cover(location_t location, vector<char>::iterator & start, size_t len);
+			bool cover(location_t location, vector<HexDataElemt_t>::iterator & start, size_t len);
 
 			string bufferToString();
 
@@ -65,8 +67,8 @@ namespace HexHeader
 
 		private:
 			std::unique_ptr<HexHeader::FileUtil::BinaryFile> p_binaryFile_;
-			vector<char> vecBuffer_;
-			std::unique_ptr<char> p_buff_;
+			HexData_t vecBuffer_;
+			std::unique_ptr<HexDataElemt_t> p_buff_;
 
 			size_t fileSize_;
 			size_t bufSize_;

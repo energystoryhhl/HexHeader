@@ -7,7 +7,7 @@ namespace HexHeader
 	{
 		AppendFile::AppendFile(char *filename)
 			:p_binaryFile_(new HexHeader::FileUtil::BinaryFile(filename)),
-			p_buff_(new char[p_binaryFile_->size() * 2])
+			p_buff_(new HexDataElemt_t[p_binaryFile_->size() * 2])
 			//p_buff_(new char(p_binaryFile_->Size() * 2)  )
 		{
 			
@@ -23,7 +23,7 @@ namespace HexHeader
 			cout << "~AppendFile()" << endl;
 		}
 
-		bool AppendFile::insert(location_t location, vector<char>::iterator & start, size_t len)
+		bool AppendFile::insert(location_t location, vector<HexDataElemt_t>::iterator & start, size_t len)
 		{
 			if (static_cast<size_t>(location) >= vecBuffer_.size())
 			{
@@ -38,7 +38,7 @@ namespace HexHeader
 
 		}
 
-		bool AppendFile::push_back(char chr)
+		bool AppendFile::push_back(HexDataElemt_t chr)
 		{
 			
 			vecBuffer_.push_back(chr);
@@ -55,14 +55,14 @@ namespace HexHeader
 				goto fail;
 			}
 
-			vecBuffer_.erase(vecBuffer_.begin() + location, vecBuffer_.begin() + len);
+			vecBuffer_.erase(vecBuffer_.begin() + location, vecBuffer_.begin() + len + location);
 			return true;
 
 		fail:
 			return false;
 		}
 
-		bool AppendFile::cover(location_t location, vector<char>::iterator & start, size_t len)
+		bool AppendFile::cover(location_t location, vector<HexDataElemt_t>::iterator & start, size_t len)
 		{
 			if (vecBuffer_.size() < location)
 			{
@@ -117,7 +117,7 @@ namespace HexHeader
 				newFilename = p_binaryFile_->fileName().append("_header_added").c_str();
 			}
 			BinaryFile newFile(newFilename);
-			size_t size = newFile.write(vecBuffer_.data(), vecBuffer_.size());
+			size_t size = newFile.write((char *)(vecBuffer_.data()), vecBuffer_.size());
 			if (size != vecBuffer_.size())
 				return false;
 			else
@@ -126,7 +126,7 @@ namespace HexHeader
 
 		bool AppendFile::writeToCurFile()
 		{
-			size_t size = p_binaryFile_->write(vecBuffer_.data(), vecBuffer_.size());
+			size_t size = p_binaryFile_->write((char *)vecBuffer_.data(), vecBuffer_.size());
 			if (size != vecBuffer_.size())
 				return false;
 			else
@@ -139,7 +139,7 @@ namespace HexHeader
 
 			assert(fileSize_ >= 0);
 
-			size_t size = p_binaryFile_->read(p_buff_.get(), fileSize_);
+			size_t size = p_binaryFile_->read( (char *) p_buff_.get(), fileSize_);
 
 			/*
 			for (int i = 0; i < fileSize_; i++)

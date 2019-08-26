@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "BinaryFile.h"
-
+#include "AppendFile.h"
 
 namespace HexHeader
 {
@@ -13,7 +13,6 @@ namespace HexHeader
 
 		size_t BinaryFile::write(char chr)
 		{
-			
 			return write(&chr, 1);;
 		}
 

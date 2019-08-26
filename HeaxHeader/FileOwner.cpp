@@ -29,7 +29,7 @@ namespace HexHeader
 	{
 		if (true == fileOpened_)
 		{
-			p_appendFile_.release();
+			p_appendFile_.reset(nullptr);
 		}
 		fileOpened_ = false;
 	}
