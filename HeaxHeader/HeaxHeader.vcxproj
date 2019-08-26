@@ -194,6 +194,7 @@
     <ClInclude Include="AppendFile.h" />
     <ClInclude Include="BinaryFile.h" />
     <ClInclude Include="Command.h" />
+    <ClInclude Include="Encrypt.h" />
     <ClInclude Include="HeaxHeader.h" />
     <ClInclude Include="HeaxHeaderDlg.h" />
     <ClInclude Include="FileOwner.h" />
@@ -282,6 +283,7 @@
     <ClCompile Include="AppendFile.cpp" />
     <ClCompile Include="BinaryFile.cpp" />
     <ClCompile Include="Command.cpp" />
+    <ClCompile Include="Encrypt.cpp" />
     <ClCompile Include="HeaxHeader.cpp" />
     <ClCompile Include="HeaxHeaderDlg.cpp" />
     <ClCompile Include="FileOwner.cpp" />

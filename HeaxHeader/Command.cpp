@@ -74,10 +74,7 @@ namespace HexHeader {
 			if (op_.size() > 2)
 			{
 				size = string_as_T<unsigned int>(op_[2]);
-				if (size > hex_.size())
-				{
-					size = hex_.size();
-				}
+
 			}
 			else {
 				size = hex_.size();
@@ -85,17 +82,25 @@ namespace HexHeader {
 
 			if(op1 == "insert" || op1 == "Insert")
 			{
+				if (size > hex_.size())
+				{
+					size = hex_.size();
+				}
 				return file_->insert(start, hex_.begin(), size);
 			}
 
 			if (op1 == "cover" || op1 == "Cover" || op1 == "modify" || op1 == "Modify")
 			{
+				if (size > hex_.size())
+				{
+					size = hex_.size();
+				}
 				return file_->cover(start, hex_.begin(), size);
 			}
 
 			if (op1 == "erase" || op1 == "Erase" || op1 == "delete" || op1 == "Delete")
 			{
-				if(op_.size() <= 2);
+				if(op_.size() <= 2)
 					return OpCodeError;
 				return file_->erase(start, size);
 			}

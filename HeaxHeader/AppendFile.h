@@ -63,6 +63,16 @@ namespace HexHeader
 				return vecBuffer_;
 			}
 
+			void setHeaderSize(int sz)
+			{
+				heaserSize_ = sz;
+			}
+
+			int headerSize()
+			{
+				return heaserSize_;
+			}
+
 			//shared_ptr<char>
 
 		private:
@@ -72,6 +82,7 @@ namespace HexHeader
 
 			size_t fileSize_;
 			size_t bufSize_;
+			int heaserSize_;
 		};
 
 	}//namespace FileUtle

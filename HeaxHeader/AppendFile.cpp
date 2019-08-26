@@ -15,6 +15,7 @@ namespace HexHeader
 			assert(p_buff_ != NULL);
 
 			loadBuffer();
+			heaserSize_ = 0;
 		}
 
 
@@ -25,7 +26,7 @@ namespace HexHeader
 
 		bool AppendFile::insert(location_t location, vector<HexDataElemt_t>::iterator & start, size_t len)
 		{
-			if (static_cast<size_t>(location) >= vecBuffer_.size())
+			if (static_cast<size_t>(location) > vecBuffer_.size())
 			{
 				goto fail;
 			}

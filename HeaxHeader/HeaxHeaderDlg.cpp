@@ -13,6 +13,7 @@
 #include "openssl\sha.h"
 #include "StringMethod.h"
 #include "Command.h"
+#include "Encrypt.h"
 
 using namespace HexHeader;
 using namespace FileUtil;
@@ -659,14 +660,25 @@ void CHeaxHeaderDlg::On_DoScript()
 
 		for (auto op : opcodes)
 		{
-			if (i.find(op))
+			if (i.find(op) != std::string::npos)
 			{
 				opFlag = true;
+				cout << "op = " << i[0] << endl;
 				break;
 			}
 		}
 
-		if (i.find("0x") !=std::string::npos)
+		for (auto enc : encryptcodes)
+		{
+			if (i.find(enc) != std::string::npos)
+			{
+				encryptFlag = true;
+				break;
+			}
+		}
+
+
+		if ((i.find("0x") != std::string::npos))
 		{
 			str2UcArray(hex, i);
 			continue;
@@ -681,7 +693,7 @@ void CHeaxHeaderDlg::On_DoScript()
 
 			Operation operation(file, hex, op);
 
-			cout << "op = " << op[0] << endl;
+			
 
 			if (operation.doOperation()!= true)
 			{
@@ -695,7 +707,24 @@ void CHeaxHeaderDlg::On_DoScript()
 				hex.clear();
 			}
 			opFlag = false;
+		}
 
+		if (encryptFlag == true)
+		{
+			//SHA256()
+			vector<string> op = CmdLine(i, " ").elemts();
+			Encrypt::EncryptBase encry(op, hex, p_fileOwner_->file());
+			if (encry.doEncrypt() == false)
+			{
+				cout << "encrypt ERROR" << endl;
+			}
+
+			for (auto i : hex)
+			{
+				printf(" %02x ", i);
+			}
+
+			encryptFlag = false;
 		}
 
 

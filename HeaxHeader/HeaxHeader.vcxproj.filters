@@ -279,6 +279,9 @@
     <ClInclude Include="StringMethod.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Encrypt.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="HeaxHeaderDlg.cpp">
@@ -306,6 +309,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="StringMethod.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Encrypt.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
