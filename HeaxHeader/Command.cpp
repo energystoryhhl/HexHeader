@@ -74,7 +74,10 @@ namespace HexHeader {
 			if (op_.size() > 2)
 			{
 				size = string_as_T<unsigned int>(op_[2]);
-
+				if (size == -1)
+				{
+					size = file_->fileSize();
+				}
 			}
 			else {
 				size = hex_.size();
@@ -102,6 +105,8 @@ namespace HexHeader {
 			{
 				if(op_.size() <= 2)
 					return OpCodeError;
+				if (size > file_->buffer().size())
+					return ParaErr;
 				return file_->erase(start, size);
 			}
 

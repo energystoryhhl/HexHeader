@@ -5,8 +5,8 @@ namespace HexHeader
 {
 	namespace FileUtil
 	{
-		AppendFile::AppendFile(char *filename)
-			:p_binaryFile_(new HexHeader::FileUtil::BinaryFile(filename)),
+		AppendFile::AppendFile(char *filename, char * mode)
+			:p_binaryFile_(new HexHeader::FileUtil::BinaryFile(filename, mode)),
 			p_buff_(new HexDataElemt_t[p_binaryFile_->size() * 2])
 			//p_buff_(new char(p_binaryFile_->Size() * 2)  )
 		{
@@ -65,12 +65,18 @@ namespace HexHeader
 
 		bool AppendFile::cover(location_t location, vector<HexDataElemt_t>::iterator & start, size_t len)
 		{
+			size_t delLen = len;
 			if (vecBuffer_.size() < location)
 			{
 				goto fail;
 			}
+			if (len > vecBuffer_.size())
+			{
+				 delLen = vecBuffer_.size();
+			}
+	
 
-			vecBuffer_.erase(vecBuffer_.begin() + location, vecBuffer_.begin() + len);
+			vecBuffer_.erase(vecBuffer_.begin() + location, vecBuffer_.begin() + location + delLen);
 
 			vecBuffer_.insert(vecBuffer_.begin() + location, start, start + len);
 
@@ -158,11 +164,16 @@ namespace HexHeader
 			bfile.write(p_buff_.get(), fileSize_);
 			*/
 
-			assert(size == fileSize_);
+			//assert(size == fileSize_);
 
 			vecBuffer_.clear();
 
 			vecBuffer_.insert(vecBuffer_.begin(), p_buff_.get(), p_buff_.get() + fileSize_);
+		}
+
+		void AppendFile::write(char *buf, size_t len)
+		{
+			p_binaryFile_->write(buf, len);
 		}
 
 

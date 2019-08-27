@@ -24,7 +24,10 @@ namespace HexHeader
 
 			str.erase(str.begin(), str.begin() + 2);
 
-			assert(str.size() % 2 == 0);
+			if (str.size() % 2 != 0)
+			{
+				str.insert(str.begin(), '0');
+			}
 
 			for (int i = 0; i < str.size() / 2; i++)
 			{

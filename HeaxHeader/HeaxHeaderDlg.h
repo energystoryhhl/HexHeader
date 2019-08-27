@@ -62,8 +62,11 @@ protected:
 
 	CString FilePathBoxSaveAs();
 
+	bool OpenPastFile();
+
 	//FileOwner fileOwner_;
 	std::unique_ptr<FileOwner> p_fileOwner_;
+	//FILE * pFile;
 
 public:
 	//friend class HexHeader;

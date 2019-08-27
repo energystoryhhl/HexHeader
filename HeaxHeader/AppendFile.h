@@ -29,7 +29,7 @@ namespace HexHeader
 		public:
 
 
-			AppendFile(char * filename);
+			AppendFile(char * filename, char * mode = "ab+");
 
 			~AppendFile();
 
@@ -72,6 +72,8 @@ namespace HexHeader
 			{
 				return heaserSize_;
 			}
+
+			void write(char *buf, size_t len);
 
 			//shared_ptr<char>
 

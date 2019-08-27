@@ -23,6 +23,9 @@ namespace HexHeader
 
 		static const string encryptcodes[] = {"CRC16", "CRC32", "SHA256", "CMAC", "ECC"};
 
+		static const  string ErrorCodeString[] = { "HexEmpty", "OpCodeError",
+			"NoOpcodeMatch", "ErrorHexSize", "ParaErr" };
+
 		class CmdLine : noncopyable
 		{
 		public:
@@ -45,12 +48,12 @@ namespace HexHeader
 		public:
 			enum ErrorCode
 			{
-				HexEmpty = -10,
-				OpCodeError = -9,
-				NoOpcodeMatch = -8,
-				ErrorHexSize = -7
+				HexEmpty = -1,
+				OpCodeError = -2,
+				NoOpcodeMatch = -3,
+				ErrorHexSize = -4,
+				ParaErr = -5
 			};
-
 
 			Operation(AppendFile* file, vector<HexDataElemt_t> &hex, vector<string> op);
 

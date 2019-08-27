@@ -15,6 +15,7 @@
 #include "Command.h"
 #include "Encrypt.h"
 
+#include <io.h>
 using namespace HexHeader;
 using namespace FileUtil;
 using namespace Detail;
@@ -189,7 +190,9 @@ void CHeaxHeaderDlg::DoUserInit()
 
 	p_fileOwner_.reset(new FileOwner);
 
+	OpenPastFile();
 
+	
 	//if (LoadLibrary(_T("libcrypto-1_1.dll")) == NULL || LoadLibrary(_T("libssl-1_1.dll")) == NULL)
 	//{
 	//	MessageBox(_T("Load lib error"));
@@ -377,6 +380,111 @@ CString CHeaxHeaderDlg::FilePathBoxSaveAs()
 }
 
 
+bool TraverseFiles(string path, int &file_num)
+{
+	_finddata_t file_info;
+	string current_path = path + "/*.*"; //可以定义后面的后缀为*.exe，*.txt等来查找特定后缀的文件，*.*是通配符，匹配所有类型,路径连接符最好是左斜杠/，可跨平台
+										 //打开文件查找句柄
+	int handle = _findfirst(current_path.c_str(), &file_info);
+	//返回值为-1则查找失败
+	if (-1 == handle)
+		return false;
+	do
+	{
+		//判断是否子目录
+		string attribute;
+		if (file_info.attrib == _A_SUBDIR) //是目录
+			attribute = "dir";
+		else
+			attribute = "file";
+		//输出文件信息并计数,文件名(带后缀)、文件最后修改时间、文件字节数(文件夹显示0)、文件是否目录
+		cout << file_info.name << ' ' << file_info.time_write << ' ' << file_info.size << ' ' << attribute << endl; //获得的最后修改时间是time_t格式的长整型，需要用其他方法转成正常时间显示
+		file_num++;
+
+	} while (!_findnext(handle, &file_info));  //返回0则遍历完
+											   //关闭文件句柄
+	_findclose(handle);
+	return true;
+}
+
+bool FinDir(string path, string dir)
+{
+	_finddata_t file_info;
+	string current_path = path + "/*"; //可以定义后面的后缀为*.exe，*.txt等来查找特定后缀的文件，*.*是通配符，匹配所有类型,路径连接符最好是左斜杠/，可跨平台
+										 //打开文件查找句柄
+	int handle = _findfirst(current_path.c_str(), &file_info);
+	//返回值为-1则查找失败
+	if (-1 == handle)
+		return false;
+	do
+	{
+		//判断是否子目录
+		string attribute;
+		if (file_info.attrib == _A_SUBDIR && ( dir == string(file_info.name))) //是目录
+		{
+			return true;
+			//break;
+		}
+		
+	} while (!_findnext(handle, &file_info));  //返回0则遍历完
+											   //关闭文件句柄
+	_findclose(handle);
+	return false;
+}
+
+bool FindFile(string path, string file)
+{
+	_finddata_t file_info;
+	string current_path = path + "/*"; //可以定义后面的后缀为*.exe，*.txt等来查找特定后缀的文件，*.*是通配符，匹配所有类型,路径连接符最好是左斜杠/，可跨平台
+										 //打开文件查找句柄
+	int handle = _findfirst(current_path.c_str(), &file_info);
+	//返回值为-1则查找失败
+	if (-1 == handle)
+		return false;
+	do
+	{
+		//判断是否子目录
+		string attribute;
+		if (file_info.attrib != _A_SUBDIR && (file == string(file_info.name)) ) //!目录
+		{
+			return true;
+		}
+
+	} while (!_findnext(handle, &file_info));  //返回0则遍历完
+											   //关闭文件句柄
+	_findclose(handle);
+	return false;
+}
+
+bool CHeaxHeaderDlg::OpenPastFile()
+{
+	struct _finddata_t fileinfo;
+	long hFile = 0;
+	
+	int a;
+	//TraverseFiles(".\\", a);
+	FILE * pFile = NULL;
+
+	if (FinDir(".\\","Config") == false)
+	{
+		CreateDirectoryA("Config", NULL);
+		pFile = fopen(".\\Config.\\lastOpen.dat","a+");
+		fclose(pFile);
+	}
+	else
+	{
+		if (false == FindFile(".\\Config", "lastOpen.dat"))
+		{
+			pFile = fopen(".\\Config\\lastOpen.dat", "a+");
+			fclose(pFile);
+		}
+	}
+	AppendFile lastOpenFile(".\\Config\\lastOpen.dat","a+");
+	editHexShow_.SetWindowTextW(CString(lastOpenFile.buffer().data()));
+	return true;
+}
+
+
 
 void CHeaxHeaderDlg::OnBnClickedOk()
 {
@@ -521,6 +629,18 @@ void CHeaxHeaderDlg::OnDropFiles(HDROP hDropInfo)
 void CHeaxHeaderDlg::OnBnClickedCancel()
 {
 	// TODO: 在此添加控件通知处理程序代码
+	AppendFile lastOpenFile(".\\Config\\lastOpen.dat", "w+");
+	//editHexShow_.SetWindowTextW(CString(lastOpenFile.buffer().data()));
+	CString cstr;
+	editHexShow_.GetWindowTextW(cstr);
+	
+	string str = Wchr2str(cstr);
+
+	str.append("\0");
+
+	lastOpenFile.write((char *)str.c_str(), str.length()+1);
+
+	
 	CDialogEx::OnCancel();
 }
 
@@ -615,7 +735,11 @@ void CHeaxHeaderDlg::On_DoScript()
 	// TODO: 在此添加控件通知处理程序代码
 
 	if (p_fileOwner_->ifOpen() == false)
+	{
+		editCtrlMsg_.SetWindowTextW(CString("No File Opened"));
 		return;
+	}
+		
 
 	CString scriptLines;
 	editHexShow_.GetWindowTextW(scriptLines);
@@ -663,7 +787,6 @@ void CHeaxHeaderDlg::On_DoScript()
 			if (i.find(op) != std::string::npos)
 			{
 				opFlag = true;
-				cout << "op = " << i[0] << endl;
 				break;
 			}
 		}
@@ -694,10 +817,11 @@ void CHeaxHeaderDlg::On_DoScript()
 			Operation operation(file, hex, op);
 
 			
-
-			if (operation.doOperation()!= true)
+			int ret = operation.doOperation();
+			if (ret!= 1)
 			{
-				cout << "ERROR!"<<endl;
+				cout << ErrorCodeString[ret * -1 -1].c_str() <<endl;
+				MessageBox(CString(ErrorCodeString[-1*ret-1].c_str()));
 				hex.clear();
 			}
 			else
@@ -705,6 +829,7 @@ void CHeaxHeaderDlg::On_DoScript()
 				listCtrlHexShow_.DeleteAllItems();
 				ListControlAddItems(p_fileOwner_->file().buffer());
 				hex.clear();
+				editCtrlMsg_.SetWindowTextW( CString(op[0].c_str()) + CString(" Done"));
 			}
 			opFlag = false;
 		}

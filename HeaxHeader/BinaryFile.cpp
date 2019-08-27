@@ -134,9 +134,9 @@ namespace HexHeader
 		}
 
 
-		BinaryFile::BinaryFile(const char* filename)
+		BinaryFile::BinaryFile(const char* filename, char* mode)
 			:filename_(filename),
-			fd_(fopen(filename_.c_str(), "ab+"))
+			fd_(fopen(filename_.c_str(), mode))
 		{
 			assert(fd_ != NULL);
 			size_ = size();

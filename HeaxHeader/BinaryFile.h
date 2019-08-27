@@ -20,7 +20,8 @@ namespace HexHeader
 		class BinaryFile : public noncopyable
 		{
 		public:
-			BinaryFile(const char* filename);
+			//BinaryFile(const char* filename ,char* mode = "ab+");
+			BinaryFile(const char* filename, char* mode = "ab+");
 
 			~BinaryFile();
 
